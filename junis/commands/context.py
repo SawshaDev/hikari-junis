@@ -46,4 +46,5 @@ class Context:
     def command(self):
         return self._bot.slash_commands.get(self._inter.command_name)
 
-
+    async def reply(self, content: hikari.UndefinedOr = hikari.UNDEFINED, **options):
+        await self._inter.create_initial_response(hikari.ResponseType.MESSAGE_CREATE, content, **options)
