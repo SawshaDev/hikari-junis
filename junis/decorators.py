@@ -22,45 +22,27 @@
 
 from __future__ import annotations
 
-import attr
+from typing import List, Callable
+
+from .commands import SlashCommand
 
 import hikari
 
-from .context import Context
+def slash_command(
+    name: str,
+    description: str = "...",
+    *,
+    options: tuple[hikari.CommandOption] | None = None
+) -> Callable[[Callable], SlashCommand]:
+    def inner(callback: Callable):
+        slash_command = SlashCommand(
+            name=name or callback.__name__,
+            description=description,
+            options=tuple(options or [])
+        )
 
-from typing import Any, Tuple, Dict, List
+        slash_command.callback = callback
 
-class SlashBase:
-    def __init__(self):
-        pass
-
-    def __call__(self, *args, **kwargs):
-        return self.callback(*args, **kwargs)
-
-    async def callback(self, ctx: "Context", **kwargs: Dict[str, Any]):
-        ...
-
-class SlashCommand(SlashBase):
-    def __init__(
-        self,
-        name: str,
-        description: str = "...",
-        options: Tuple[hikari.CommandOption, ...] = ()
-    ):
-        self._name = name
-        self._description = description
-        self._options = options
-
-        super().__init__()
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def description(self) -> str:
-        return self._description
-
-    @property
-    def options(self) -> Tuple[hikari.CommandOption, ...]:
-        return self._options
+        return slash_command
+    
+    return inner

@@ -22,45 +22,11 @@
 
 from __future__ import annotations
 
-import attr
+class JunisException(Exception):
+    "Base Exception for all other exceptions"
 
-import hikari
+class BotNotInitialised(JunisException):
+    """Raised when bot is accessed without initlization."""
 
-from .context import Context
-
-from typing import Any, Tuple, Dict, List
-
-class SlashBase:
-    def __init__(self):
-        pass
-
-    def __call__(self, *args, **kwargs):
-        return self.callback(*args, **kwargs)
-
-    async def callback(self, ctx: "Context", **kwargs: Dict[str, Any]):
-        ...
-
-class SlashCommand(SlashBase):
-    def __init__(
-        self,
-        name: str,
-        description: str = "...",
-        options: Tuple[hikari.CommandOption, ...] = ()
-    ):
-        self._name = name
-        self._description = description
-        self._options = options
-
-        super().__init__()
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def description(self) -> str:
-        return self._description
-
-    @property
-    def options(self) -> Tuple[hikari.CommandOption, ...]:
-        return self._options
+    def __init__(self) -> None:
+        super().__init__("Bot cannot be accessed yet.")
