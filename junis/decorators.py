@@ -28,21 +28,15 @@ from .commands import SlashCommand
 
 import hikari
 
+
 def slash_command(
-    name: str,
-    description: str = "...",
-    *,
-    options: tuple[hikari.CommandOption] | None = None
+    name: str, description: str = "...", *, options: tuple[hikari.CommandOption] | None = None
 ) -> Callable[[Callable], SlashCommand]:
     def inner(callback: Callable):
-        slash_command = SlashCommand(
-            name=name or callback.__name__,
-            description=description,
-            options=tuple(options or [])
-        )
+        slash_command = SlashCommand(name=name or callback.__name__, description=description, options=tuple(options or []))
 
         slash_command.callback = callback
 
         return slash_command
-    
+
     return inner

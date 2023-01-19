@@ -38,13 +38,13 @@ class JunisApp:
         self.slash_commands: Dict[str, SlashCommand] = {}
 
         self._bot.subscribe(hikari.StartedEvent, self._update_commands)
-        
+
         self._bot.subscribe(hikari.InteractionCreateEvent, self.process_commands)
 
     @classmethod
     def from_gatewaybot(cls, bot: hikari.GatewayBot):
         return cls(bot=bot)
-    
+
     def add_slash(self, command: SlashCommand):
         if self.slash_commands.get(name := command.name):
             raise ValueError("Command already exists.")
@@ -56,7 +56,7 @@ class JunisApp:
             nonlocal command
             self.add_slash(command)
             return command
-        
+
         return inner()
 
     async def process_commands(self, event: hikari.InteractionCreateEvent):
@@ -78,7 +78,9 @@ class JunisApp:
     async def _update_commands(self, event: hikari.StartedEvent) -> None:
         await self._handle_global_commands()
 
-    async def __prepare_command_kwargs(self, inter: hikari.CommandInteraction, options: Sequence[hikari.CommandInteractionOption]):
+    async def __prepare_command_kwargs(
+        self, inter: hikari.CommandInteraction, options: Sequence[hikari.CommandInteractionOption]
+    ):
         kwargs: Dict[str, Any] = {}
 
         for option in options or []:
@@ -96,33 +98,25 @@ class JunisApp:
                     kwargs[option.name] = None
                 else:
                     kwargs[option.name] = self._bot.cache.get_role(option.value)
-            elif option.type == hikari.OptionType.ATTACHMENT and isinstance(
-                option.value, hikari.Snowflake
-            ):
+            elif option.type == hikari.OptionType.ATTACHMENT and isinstance(option.value, hikari.Snowflake):
                 if (res := inter.resolved) is None:
                     raise Exception("")
                 attachment = res.attachments.get(option.value)
                 kwargs[option.name] = attachment
             else:
                 kwargs[option.name] = option.value
-        return kwargs         
+        return kwargs
 
     async def _handle_global_commands(self):
         userbot = self._bot.get_me()
         if not userbot:
             raise BotNotInitialised()
 
-
         command_builders: List[hikari.api.SlashCommandBuilder] = []
 
         if self._purge_extra is True:
-            for command in [
-                c
-                for c in self.slash_commands.values()
-            ]:
-                command_builder = self._bot.rest.slash_command_builder(
-                    command.name, command.description
-                )
+            for command in [c for c in self.slash_commands.values()]:
+                command_builder = self._bot.rest.slash_command_builder(command.name, command.description)
                 [command_builder.add_option(option) for option in command.options]
                 command_builders.append(command_builder)
 
@@ -130,14 +124,10 @@ class JunisApp:
 
             return
 
-
         for command in self.slash_commands.values():
             builder = self._bot.rest.slash_command_builder(command.name, command.description)
             print(command.name)
-            
-            [
-                builder.add_option(option) 
-                for option in command.options
-            ]
+
+            [builder.add_option(option) for option in command.options]
 
             await builder.create(self._bot.rest, userbot.id)

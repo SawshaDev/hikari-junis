@@ -30,6 +30,7 @@ from .context import Context
 
 from typing import Any, Tuple, Dict, List
 
+
 class SlashBase:
     def __init__(self):
         pass
@@ -40,13 +41,9 @@ class SlashBase:
     async def callback(self, ctx: "Context", **kwargs: Dict[str, Any]):
         ...
 
+
 class SlashCommand(SlashBase):
-    def __init__(
-        self,
-        name: str,
-        description: str = "...",
-        options: Tuple[hikari.CommandOption, ...] = ()
-    ):
+    def __init__(self, name: str, description: str = "...", options: Tuple[hikari.CommandOption, ...] = ()):
         self._name = name
         self._description = description
         self._options = options

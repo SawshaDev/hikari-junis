@@ -29,13 +29,14 @@ import hikari
 if TYPE_CHECKING:
     from ..bot import JunisApp
 
+
 class Context:
     def __init__(self, bot: "JunisApp", event: hikari.InteractionCreateEvent):
         inter = event.interaction
 
         if not isinstance(inter, hikari.CommandInteraction):
             raise ValueError(f"Wrong interaction passed.\nExcepted :class:`hikari.CommandInteraction`, got {inter}")
-        
+
         self.event = event
         self._bot = bot
         self._inter = inter

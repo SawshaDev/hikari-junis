@@ -22,8 +22,10 @@
 
 from __future__ import annotations
 
+
 class JunisException(Exception):
     "Base Exception for all other exceptions"
+
 
 class BotNotInitialised(JunisException):
     """Raised when bot is accessed without initlization."""
