@@ -7,7 +7,7 @@ with open("requirements.txt") as f:
 
 path = Path(__file__).parent / "junis" / "__init__.py"
 
-packages = ["junis*"]
+packages = ["junis", "junis.commands"]
 
 
 setup(

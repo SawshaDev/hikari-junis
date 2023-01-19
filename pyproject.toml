@@ -14,7 +14,8 @@ line_length = 125
 
 [tool.pyright]
 include = [
-    "junis*"
+    "junis",
+    "junis.commands"
 ]
 exclude = [
     "**/__pycache__",
